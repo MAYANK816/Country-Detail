@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="user_input">
+        <p id="note">Details Already Exist</p>
+        <input type="text" placeholder="country name ..." id="data">
+        <button id="btn" onclick="dataRetrieve()">Search.....</button>
+    </div>
+    <div class="main">
+    </div>
+    <script>
+        var check = [];
+
+        function dataRetrieve() {
+
+            const country = document.getElementById("data").value;
+            const container = document.querySelector(".main");
+            if (check.indexOf(country) == -1) {
+                document.getElementById('note').style.display = "none";
+                check.push(country);
+                const url = "https://restcountries.eu/rest/v2/name/" + country;
+                //  console.log(url);
+                const request = new XMLHttpRequest();
+                request.open('GET', url);
+                request.send();
+                //to get the response
+                request.addEventListener('load', function() {
+                    var data = JSON.parse(this.responseText);
+                    // console.log(data.name);
+                    // console.log(data.capital);
+                    var lng = "languages";
+                    console.log(data[data.length - 1]["languages"][0]["name"]);
+                    const htmlCardData = ` 
+                <div class="container">
+            <div class="card">
+                <div class="imgBx">
+                    <img src="${data[data.length-1].flag}"/>
+                </div>
+                <div class="contentBx">
+                    <h2>Country Name : ${data[data.length-1].name} </h2>
+                    <div class="size">
+                            <h3>Capital : ${data[data.length-1].capital}</h3>
+                    </div>
+                    <div class="color">
+                        <h3>Language : </h3>
+                        <span>${data[data.length - 1]["languages"][0]["name"]}</span> 
+                    </div>
+                   <div class="color">
+                        <h3>Population :</h3>
+                        <span>${data[data.length-1].population}</span>
+                    </div> 
+                  
+                </div>
+            </div>
+        </div>`
+                    container.insertAdjacentHTML("afterbegin", htmlCardData);
+                });
+            } else {
+                document.getElementById('note').style.display = "block";
+            }
+        }
+    </script>
+</body>
+
+</html>
